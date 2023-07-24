@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Tuple, Dict
+from typing import Tuple, Dict, Optional
 import random
 import dice
 
@@ -21,14 +21,17 @@ class EwaRoller:
                     break
         return rollResult, outcome
 
-    def rollChance(self, bonus: int = 0) -> int:
-        return random.randint(1, self.chanceDie.die) + bonus
-
-    def rollAll(self, rankName: str, chanceBonus: int = 0) -> Tuple[int, str, int, str]:
-        chanceResult = self.rollChance(chanceBonus)
-        rankResult, outcome = self.rollOut(rankName)
-        if chanceResult < self.ranks[rankName].failUnder:
-            chanceOutcome = self.chanceDie.fail
+    def rollChance(self, bonus: int = 0, rankName: str = None) -> Tuple[int,str]:
+        outcome = random.randint(1, self.chanceDie.die)+bonus
+        if rankName is not None:
+            if outcome < self.ranks[rankName].failUnder:
+                return outcome, self.chanceDie.fail
+            else:
+                return outcome, self.chanceDie.success
         else:
-            chanceOutcome = self.chanceDie.success
+            return outcome, ""
+
+    def rollAll(self, chanceBonus: int = 0, rankName: str = None) -> Tuple[int, str, int, str]:
+        chanceResult, chanceOutcome = self.rollChance(chanceBonus, rankName)
+        rankResult, outcome = self.rollOut(rankName)
         return rankResult, outcome, chanceResult, chanceOutcome
