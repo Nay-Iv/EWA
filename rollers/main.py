@@ -17,7 +17,7 @@ ruleset_path = os.path.abspath(os.path.join(config_dir_path, relative_path))
 
 def get_chance_params():
     """Задаёт Шанс"""
-    result = [int(input("bonus: "))]
+    result = [int(input("number of dice: ")), int(input("bonus: "))]
     if input("rank?(y/n): ").lower() == 'y':
         result += get_out_params()
     return result
@@ -43,14 +43,15 @@ def main():
     responses = {1: roller.roll_chance, 2: roller.roll_out, 3: roller.roll_all}
     param_setters = {1: get_chance_params, 2: get_out_params, 3: get_all_params}
     while True:
-        response = int(input("""
-        ******
-        1. Roll Chance
-        2. Roll Rank
-        3. Roll All
-        (0 to exit)
-        ----
-        I want to: """))
+        response = int(input(
+"""
+******
+1. Roll Chance
+2. Roll Rank
+3. Roll All
+(0 to exit)
+----
+I want to: """))
         if response == 0:
             break
         for i in [1, 2, 3]:
