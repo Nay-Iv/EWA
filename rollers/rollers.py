@@ -13,49 +13,69 @@ class EwaRoller:
     ranks: Dict[str, dice.EwaOutcomeDie]
     chance_die: dice.EwaChanceDie
 
-    def roll_out(self, rank_name: str) -> Tuple[int, str]:
+    def roll_out(self, rank_name: str, num_dice: int = 1) -> List[Tuple[int, str]]:
         """Каталка Исхода"""
         if rank_name not in self.ranks:
             raise ValueError(f"Rank '{rank_name}' not found")
         rank = self.ranks[rank_name]
-        outcome = None
-        while outcome is None:
+        outcomes: list[tuple[int, str]] = []
+        for _ in range(num_dice):
             roll_result = random.randint(1, rank.die)
             for outcome_name, outcome_values in rank.outcomes.items():
                 if roll_result in outcome_values:
                     outcome = outcome_name
-                    break
-        return roll_result, outcome
+            outcomes.append((roll_result, outcome))
+        return outcomes
 
-    def roll_chance(self, num_dice: int = 1, bonus: int = 0, rank_name: str = None) -> Tuple[List[int], str]:
+    def roll_chance(self, num_dice: int = 1, bonus: int = 0, rank_name: str = None) -> Tuple[int, List[int], str]:
         """Каталка Шанса"""
+
         outcomes = []
-        for i in range(num_dice):
+        chance_results = []
+
+        for _ in range(num_dice):
             outcome = random.randint(1, self.chance_die.die) + bonus
             outcomes.append(outcome)
-        if rank_name is not None:
-            fail_under = self.ranks[rank_name].fail_under
-            success_outcome = self.chance_die.success
-            fail_outcome = self.chance_die.fail
-            outcome_results = [success_outcome if outcome >= fail_under else fail_outcome for outcome in outcomes]
-            return outcomes, ", ".join(outcome_results)
-        return outcomes, ""
 
-    def roll_all(self, num_chance_dice: int = 1, chance_bonus: int = 0, rank_name: str = None) -> EwaRollResult:
+            if rank_name is not None:
+                rank = self.ranks.get(rank_name)
+                if rank:
+                    fail_under = rank.fail_under
+                    if outcome >= fail_under:
+                        chance_results.append(self.chance_die.success)
+                    else:
+                        chance_results.append(self.chance_die.fail)
+
+            else:
+                chance_results.append("")
+
+        return num_dice, outcomes, chance_results
+
+    def roll_all(self, num_dice: int = 1, chance_bonus: int = 0, rank_name: str = None) -> EwaRollResult:
         """Каталка полной проверки"""
-        chance_outcomes = []
-        for i in range(num_chance_dice):
-            chance_result, _ = self.roll_chance(bonus=chance_bonus, rank_name=rank_name)
-            chance_outcomes.append(chance_result)
-        outcome_value, outcome = self.roll_out(rank_name)
+        num_chance_dice, chance_outcomes, chance_results = self.roll_chance(num_dice, chance_bonus, rank_name)
+
+        rank_outcomes = self.roll_out(rank_name, num_dice)
+
         if rank_name is not None:
-            fail_under = self.ranks[rank_name].fail_under
+            rank = self.ranks[rank_name]
+            fail_under = rank.fail_under
             success_outcome = self.chance_die.success
             fail_outcome = self.chance_die.fail
-            flat_chance_outcomes = [out for rolls in chance_outcomes for out in rolls]
-            overall_outcome = success_outcome if all(
-                outcome >= fail_under for outcome in flat_chance_outcomes) else fail_outcome
+
+            chance_passes = [co >= fail_under for co in chance_outcomes]
+
+            if all(chance_passes):
+                overall_outcome = success_outcome
+            else:
+                overall_outcome = fail_outcome
+
         else:
             overall_outcome = ""
-        return EwaRollResult(outcome=outcome, outcome_value=outcome_value, chance_outcomes=chance_outcomes,
-                             overall_outcome=overall_outcome)
+
+        return EwaRollResult(
+            rank_outcomes=rank_outcomes,
+            chance_outcomes=chance_outcomes,
+            chance_results=chance_results,
+            overall_outcome=overall_outcome
+        )
