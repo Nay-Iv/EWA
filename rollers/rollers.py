@@ -52,8 +52,9 @@ class EwaRoller:
             fail_under = self.ranks[rank_name].fail_under
             success_outcome = self.chance_die.success
             fail_outcome = self.chance_die.fail
+            flat_chance_outcomes = [out for rolls in chance_outcomes for out in rolls]
             overall_outcome = success_outcome if all(
-                result >= fail_under for result in chance_outcomes) else fail_outcome
+                outcome >= fail_under for outcome in flat_chance_outcomes) else fail_outcome
         else:
             overall_outcome = ""
         return EwaRollResult(outcome=outcome, outcome_value=outcome_value, chance_outcomes=chance_outcomes,
