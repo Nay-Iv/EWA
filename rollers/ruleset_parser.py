@@ -13,7 +13,7 @@ class Ruleset:
     chance: dice.EwaChanceDie
 
     @classmethod
-    def create_rank_objects(cls, ranks: Dict[str, Dict[str, object]]) -> None:
+    def create_rank_objects(cls, ranks: Dict[str, Dict[str, object]]):
         """Фабрика Исходов"""
         for rank_id, rank_data in ranks.items():
             outcomes = {}
@@ -23,7 +23,7 @@ class Ruleset:
             cls.ranks[rank_id] = rank
 
     @classmethod
-    def parse_source(cls, some_str) -> Dict:
+    def parse_source(cls, some_str):
         """Читаем из файла или строки"""
         print(some_str)
         if isfile(some_str) and some_str.endswith('.json'):
@@ -39,6 +39,7 @@ class Ruleset:
                 print("BAD JSON")
                 data = None
         cls.data = data
+
     @classmethod
     def parse_file(cls, some_str):
         """Читаем из файла"""
@@ -49,6 +50,7 @@ class Ruleset:
     def parse_string(cls, some_str):
         """Читаем из строки"""
         return json.loads(some_str)
+
     @classmethod
     def create_chance(cls) -> dice.EwaChanceDie:
         """Заводим кость Шанса"""
