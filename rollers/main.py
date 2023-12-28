@@ -1,40 +1,54 @@
 """Запуск"""
+import re
 
-import configparser
-import os
-
-from ruleset_parser import Ruleset
-import rollers
 from setup import EwaConfig
 
-def get_roll_params():
-    get_bonus = input("Enter bonus: ")
-    bonus = int(get_bonus) if get_bonus != '' else 0
-    get_rank = input("Enter rank (leave blank for just chance roll): ")
-    rank = get_rank if get_rank != '' else None
-    return bonus, rank
+def parse_roll_input(input_str):
+    roll_type = 'chance'
+
+    if re.fullmatch(r'(r\d+)', input_str):
+        roll_type = 'rank'
+    elif re.fullmatch(r'([+-]\d+)', input_str):
+        roll_type = 'chance'
+    elif re.fullmatch(r'([+-]\d+r\d+)', input_str):
+        roll_type = 'full'
+
+    roll_params = {}
+
+    if roll_type in ['chance', 'full']:
+        chance_match = re.match(r'([+-]\d+)', input_str)
+        roll_params['bonus'] = int(chance_match.group(1))
+
+    if roll_type in ['rank', 'full']:
+        rank_match = re.search(r'r(\d+)', input_str)
+        roll_params['rank'] = rank_match.group(1)
+
+    return roll_type, roll_params
 
 
 def main():
-    """Запуск Каталки"""
+    """Roll dice"""
+
     roller = EwaConfig.roller
-    print("1. Roll Chance\n2. Roll Rank\n3. Roll All")
 
-    choice = input("Enter your choice: ")
+    while True:
+        input_str = input("Enter roll (e.g. '-1r3'): ")
 
-    if choice == "1":
-        params = get_roll_params()
-        roll_result = roller.roll_chance(*params)
+        if input_str.lower() == 'quit':
+            break
 
-    elif choice == "2":
-        _, rank_name = get_roll_params()
-        roll_result = roller.roll_out(rank_name)
+        roll_type, params = parse_roll_input(input_str)
+        bonus = params.get('bonus', 0)
+        rank = params.get('rank')
 
-    elif choice == "3":
-        params = get_roll_params()
-        roll_result = roller.roll_all(*params)
+        if roll_type == 'rank':
+            roll_result = roller.roll_rank(params['rank'])
+        elif roll_type == 'chance':
+            roll_result = roller.roll_chance(params['bonus'])
+        elif roll_type == 'full':
+            roll_result = roller.roll_full(bonus, rank)
 
-    print(roll_result)
+        print(roll_result)
 
 
 if __name__ == '__main__':

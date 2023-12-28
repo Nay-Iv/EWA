@@ -13,7 +13,7 @@ class EwaRoller:
     ranks: Dict[str, dice.EwaOutcomeDie]
     chance_die: dice.EwaChanceDie
 
-    def roll_out(self, rank_name: str) -> EwaRollResult:
+    def roll_rank(self, rank_name: str) -> EwaRollResult:
         """Каталка Исхода"""
         if rank_name not in self.ranks:
             raise ValueError(f"Rank '{rank_name}' not found")
@@ -42,10 +42,10 @@ class EwaRoller:
 
         return EwaRollResult(roll_result=roll_result, roll_outcome=outcome)
 
-    def roll_all(self, chance_bonus: int = 0, rank_name: str = None) -> Dict[str, EwaRollResult]:
+    def roll_full(self, chance_bonus: int = 0, rank_name: str = None) -> Dict[str, EwaRollResult]:
         """Каталка полной проверки"""
         chance_outcome = self.roll_chance(chance_bonus, rank_name)
-        rank_outcome = self.roll_out(rank_name)
+        rank_outcome = self.roll_rank(rank_name)
 
         result = {
             'rank': rank_outcome,
