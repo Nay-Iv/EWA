@@ -1,2 +1,4 @@
 # EWA
-Everybody Wants an Adventure trpg ruleset
+Everybody Wants an Adventure companion bot
+- Simple Checks
+- ...

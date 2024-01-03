@@ -2,14 +2,16 @@
 
 import logging
 from telegram import Update
+from telegram.constants import ParseMode
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
 
-from main import parse_roll_input, EwaConfig
+from rollers.main import parse_roll_input, EwaConfig
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
+
 
 async def roll_handler(update, context: ContextTypes.DEFAULT_TYPE):
     roll_input = ''.join(context.args)
@@ -25,26 +27,40 @@ async def roll_handler(update, context: ContextTypes.DEFAULT_TYPE):
 
     elif roll_type == 'full':
         result = roller.roll_full(params['bonus'], params['rank'])
-        response = result['rank'].pretty_result+' '+result['chance'].pretty_result
+        response = '\t'.join([result['rank'].pretty_result, result['chance'].pretty_result])
 
+    user = update.effective_user
+    response_pretty = f"_{user.first_name}_ проходит проверку" + \
+                      f"\tc результатом:\n *{response}*"
 
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=response)
+    await update.message.reply_text(text=response_pretty, parse_mode=ParseMode.MARKDOWN)
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
+    context.application.add_handler(roll_handler)
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="*LET'S ROLL*", parse_mode=ParseMode.MARKDOWN)
+
+
+async def stop(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.application.remove_handler(roll_handler)
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="K, lemme shut up for a while!")
 
 
 async def help_handler(update, context: ContextTypes.DEFAULT_TYPE):
     help_text = "Use /roll to roll dice!"
     await context.bot.send_message(chat_id=update.effective_chat.id, text=help_text)
 
+
 if __name__ == '__main__':
     application = ApplicationBuilder().token(EwaConfig.tg_bot_token).build()
 
     start_handler = CommandHandler('start', start)
+    roll_handler = CommandHandler('roll', roll_handler)
+    help_handler = CommandHandler('help', help_handler)
+    stop_handler = CommandHandler('stop', stop)
+
     application.add_handler(start_handler)
-    application.add_handler(CommandHandler('roll', roll_handler))
-    application.add_handler(CommandHandler('help', help_handler))
+    application.add_handler(help_handler)
+    application.add_handler(stop_handler)
 
     application.run_polling()

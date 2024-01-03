@@ -53,44 +53,29 @@
         }
     },
     "drama":{
-        "level1":{
-            "dramaValues": [1,2],
+        "doom_floor": 3,
+        "positive_value_effects": "{{MIN_CHANCE}}, {{SUBTRACT_RANK}}",
+        "negative_value_effects": "{{MAX_CHANCE}}, {{ADD_RANK}}",
+        "odd_effect":{
             "affectsChance": true,
-            "isRankSensitive": true,
-            "affectsOut": false,
-            "rankChanceRollEffects":{
-                "1": "-3",
-                "2": "-3",
-                "3": "-4",
-                "4": "-5",
-                "5": "-7"
-            },
-            "rankOutEffects":{}
-        },
-        "level2":{
-            "dramaValues": [2,3],
-            "affectsChance": true,
-            "isRankSensitive": true,
-            "affectsOut": false,
-            "rankChanceRollEffects":{
-                "1": "1_rank_1",
-                "2": "1_rank_2",
-                "3": "1_rank_3",
-                "4": "1_rank_4",
-                "5": "1_rank_5"
-            },
-            "rankOutEffects":{}
-        },
-        "level3":{
-            "dramaValues": [3,4,5],
-            "affectsChance": true,
+            "chanceEffect": "{{FLAT_MOD}}",
             "isRankSensitive": false,
             "affectsOut": false,
-            "rankChanceRollEffects":{
-                "all": "min_all"
-            },
-            "rankOutEffects":{}
+            "outEffect": ""
+        },
+        "even_effect": {
+            "affectsChance": true,
+            "chanceEffect": "{{RANK_DIE}}",
+            "isRankSensitive": true,
+            "affectsOut": false,
+            "outEffect": ""
+        },
+        "doom_effect": {
+            "affectsChance": true,
+            "chanceEffect": "{{ADD_CHANCE_DIE}}",
+            "isRankSensitive": false,
+            "affectsOut": false,
+            "outEffect": ""
         }
     }
-
 }

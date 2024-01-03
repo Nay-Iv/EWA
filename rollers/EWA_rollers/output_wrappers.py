@@ -13,4 +13,5 @@ class EwaRollResult:
     def __init__(self, roll_result, roll_outcome=None):
         self.roll_result = roll_result
         self.roll_outcome = roll_outcome
-        self.pretty_result = f"{self.roll_outcome}"+(f"({self.roll_result})" if self.roll_result is not None else '')
+        self.pretty_result = (f"{self.roll_outcome}" if self.roll_outcome is not None else "Результат") +\
+                             (f"\t({self.roll_result})" if self.roll_result is not None else '')

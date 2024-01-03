@@ -3,7 +3,7 @@
 import json
 from typing import Dict
 from os.path import isfile
-import dice
+from EWA_rollers import dice
 
 class Ruleset:
     """Вычитывалка правил"""
@@ -11,16 +11,7 @@ class Ruleset:
     ranks = {}
     num_ranks: int
     chance: dice.EwaChanceDie
-
-    @classmethod
-    def create_rank_objects(cls, ranks: Dict[str, Dict[str, object]]):
-        """Фабрика Исходов"""
-        for rank_id, rank_data in ranks.items():
-            outcomes = {}
-            for outcome_name, outcome_values in rank_data["outcomes"].items():
-                outcomes[outcome_name] = outcome_values
-            rank = dice.EwaOutcomeDie(rank_id, rank_data["die"], rank_data["failUnder"], outcomes)
-            cls.ranks[rank_id] = rank
+    drama = {}
 
     @classmethod
     def parse_source(cls, some_str):
@@ -50,6 +41,16 @@ class Ruleset:
     def parse_string(cls, some_str):
         """Читаем из строки"""
         return json.loads(some_str)
+
+    @classmethod
+    def create_rank_objects(cls, ranks: Dict[str, Dict[str, object]]):
+        """Фабрика Исходов"""
+        for rank_id, rank_data in ranks.items():
+            outcomes = {}
+            for outcome_name, outcome_values in rank_data["outcomes"].items():
+                outcomes[outcome_name] = outcome_values
+            rank = dice.EwaOutcomeDie(rank_id, rank_data["die"], rank_data["failUnder"], outcomes)
+            cls.ranks[rank_id] = rank
 
     @classmethod
     def create_chance(cls) -> dice.EwaChanceDie:

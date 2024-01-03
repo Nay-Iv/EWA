@@ -4,8 +4,8 @@ import configparser
 import os
 from dataclasses import dataclass
 
-from ruleset_parser import Ruleset
-import rollers
+from EWA_rollers.ruleset_parser import Ruleset
+from EWA_rollers import rollers
 
 config = configparser.ConfigParser()
 config.read('config.ini')
