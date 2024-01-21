@@ -6,11 +6,11 @@ from setup import EwaConfig
 def parse_roll_input(input_str):
     roll_type = 'chance'
 
-    if re.fullmatch(r'(r\d+)', input_str):
+    if re.fullmatch(r'([Rr]\d+)', input_str):
         roll_type = 'rank'
     elif re.fullmatch(r'([+-]\d+)', input_str):
         roll_type = 'chance'
-    elif re.fullmatch(r'([+-]\d+r\d+)', input_str):
+    elif re.fullmatch(r'([+-]\d+[Rr]\d+)', input_str):
         roll_type = 'full'
 
     roll_params = {}
@@ -20,7 +20,7 @@ def parse_roll_input(input_str):
         roll_params['bonus'] = int(chance_match.group(1))
 
     if roll_type in ['rank', 'full']:
-        rank_match = re.search(r'r(\d+)', input_str)
+        rank_match = re.search(r'[Rr](\d+)', input_str)
         roll_params['rank'] = rank_match.group(1)
 
     return roll_type, roll_params

@@ -5,13 +5,12 @@ from telegram import Update
 from telegram.constants import ParseMode
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
 
-from main import parse_roll_input, EwaConfig
+from rollers.main import parse_roll_input, EwaConfig
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
-
 
 async def roll_handler(update, context: ContextTypes.DEFAULT_TYPE):
     roll_input = ''.join(context.args)
@@ -38,17 +37,22 @@ async def roll_handler(update, context: ContextTypes.DEFAULT_TYPE):
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.application.add_handler(roll_handler)
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="*LET'S ROLL*", parse_mode=ParseMode.MARKDOWN)
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="*ПОКАТАЕМ*", parse_mode=ParseMode.MARKDOWN)
 
 
 async def stop(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.application.remove_handler(roll_handler)
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="K, lemme shut up for a while!")
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Ну и пожалуйста!")
 
 
 async def help_handler(update, context: ContextTypes.DEFAULT_TYPE):
-    help_text = "Use /roll to roll dice!"
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=help_text)
+    help_text = "*/start* - запустить бота \n" +\
+     "*/roll* - провести проверку \n" +\
+     "Как провести проверку: +-n*R*, где +-n - бонус/штраф к Шансу, N - ранг атрибута\n" +\
+     "Можно катать только Шанс: +-n \n" +\
+     "Можно катать только Исход: *R*N \n" +\
+     "*/stop* - заткнуть бота"
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=help_text,  parse_mode=ParseMode.MARKDOWN)
 
 
 if __name__ == '__main__':
