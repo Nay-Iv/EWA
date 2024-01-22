@@ -5,7 +5,7 @@ from telegram import Update
 from telegram.constants import ParseMode
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
 
-from rollers.main import parse_roll_input, EwaConfig
+from main import parse_roll_input, EwaConfig
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
