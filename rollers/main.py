@@ -1,6 +1,5 @@
 """Запуск"""
 import re
-
 from setup import EwaConfig
 
 def parse_roll_input(input_str):
@@ -8,9 +7,9 @@ def parse_roll_input(input_str):
 
     if re.fullmatch(r'([Rr]\d+)', input_str):
         roll_type = 'rank'
-    elif re.fullmatch(r'([+-]\d+)', input_str):
+    elif re.fullmatch(r'([+-]?\d+)', input_str):
         roll_type = 'chance'
-    elif re.fullmatch(r'([+-]\d+[Rr]\d+)', input_str):
+    elif re.fullmatch(r'([+-]?\d+[Rr]\d+)', input_str):
         roll_type = 'full'
 
     roll_params = {}
