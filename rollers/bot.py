@@ -29,7 +29,7 @@ async def roll_handler(update, context: ContextTypes.DEFAULT_TYPE):
         response = '\t'.join([result['rank'].pretty_result, result['chance'].pretty_result])
 
     user = update.effective_user
-    response_pretty = f"_{user.first_name}_ проходит проверку" + \
+    response_pretty = f"_Кто-то_ проходит проверку" + \
                       f"\tc результатом:\n *{response}*"
 
     await update.message.reply_text(text=response_pretty, parse_mode=ParseMode.MARKDOWN)

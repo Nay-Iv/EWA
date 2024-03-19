@@ -3,7 +3,7 @@
 import json
 from typing import Dict
 from os.path import isfile
-import dice
+from rollers.EWA_rollers import dice
 
 class Ruleset:
     """Вычитывалка правил"""

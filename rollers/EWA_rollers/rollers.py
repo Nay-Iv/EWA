@@ -3,8 +3,8 @@
 from dataclasses import dataclass
 from typing import Dict
 import random
-import dice
-from output_wrappers import EwaRollResult
+from rollers.EWA_rollers import dice
+from rollers.EWA_rollers.output_wrappers import EwaRollResult
 
 
 @dataclass
